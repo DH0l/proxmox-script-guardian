@@ -1,0 +1,14 @@
+[project]
+name = "proxmox-script-guardian"
+version = "0.1.0"
+description = "Audit and verify Proxmox helper scripts"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "typer",
+    "requests",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"
