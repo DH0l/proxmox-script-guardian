@@ -1,16 +1,16 @@
 import typer
-import requests
+from pathlib import Path
 import json
+from src.scanner.repo_scanner import scan_repo_and_write_report
 
 app = typer.Typer()
 
 @app.command()
-def audit_local(path: str):
-    """Audit a local script file using the local API server"""
-    with open(path, "r", encoding="utf-8") as fh:
-        content = fh.read()
-    resp = requests.post("http://localhost:8000/audit", json={"content": content})
-    print(json.dumps(resp.json(), indent=2))
+def scan_remote(repo: str, out: str = "report.json", ref: str | None = None):
+    """Scan a remote repo (owner/repo or git URL) and save JSON report."""
+    outpath = Path(out).expanduser().resolve()
+    scan_repo_and_write_report(repo, str(outpath), ref=ref)
+    print(f"Wrote report to {outpath}")
 
 if __name__ == "__main__":
     app()
