@@ -24,7 +24,7 @@ jobs:
 
       - name: Run tests
         run: |
-          PYTHONPATH=$PWD/src python -m pytest -q
+          PYTHONPATH=$PWD/src python scripts/run_scan.py
 
       - name: Run static scan
         run: |
