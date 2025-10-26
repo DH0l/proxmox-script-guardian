@@ -1,4 +1,5 @@
-from src.cli import pve_guardian
+from src.cli.pve_guardian import app
 
 if __name__ == "__main__":
-    pve_guardian.app()
+    app()  # Let Typer handle sys.argv automatically
+
