@@ -1,5 +1,5 @@
 import glob, json
-from src.analyzer.rules import analyze_script
+from analyzer.rules import analyze_script
 
 print("Scanning repository scripts...")
 
