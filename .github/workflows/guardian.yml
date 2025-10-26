@@ -1,23 +1,48 @@
 name: Guardian Audit & Tests
 
 on:
-  push:
   pull_request:
+  push:
+    branches: [ "main" ]
 
 jobs:
-  test:
+  test-and-scan:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install fastapi uvicorn typer requests pytest
+          pip install pytest requests
+
       - name: Run tests
         run: |
-          export PYTHONPATH=$PWD/src
-          pytest -q
+          # PYTHONPATH inline ensures src/ is found
+          PYTHONPATH=$PWD/src python -m pytest -q
+
+      - name: Run simple static scan
+        run: |
+          echo "Scanning repository scripts..."
+          python - <<'PY'
+import glob, json
+from src.analyzer.rules import analyze_script
+
+issues = {}
+for path in glob.glob("**/*.sh", recursive=True):
+    with open(path, "r", encoding="utf-8") as fh:
+        content = fh.read()
+    findings = analyze_script(content)
+    if findings:
+        issues[path] = [f.__dict__ for f in findings]
+
+print(json.dumps(issues, indent=2))
+if issues:
+    print("Warnings found")
+PY
